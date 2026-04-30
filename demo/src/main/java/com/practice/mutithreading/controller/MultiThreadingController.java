@@ -1,5 +1,6 @@
 package com.practice.mutithreading.controller;
 
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 
@@ -20,11 +21,15 @@ public class MultiThreadingController {
 	private ExecutorService executerService;
 	
 	@GetMapping("/run")
-	public String runTask() throws Exception {
-		Future<String> future =  executerService.submit(() -> multiThreadingService.runTask());
-		String s1 = future.get();
-		System.out.println("Before returns");
-		return s1;
+	public CompletableFuture<String> runTask() throws Exception {
+		return multiThreadingService.runTaskAsync(executerService)
+				.thenApply(result -> result + " [processed by controller]");
+		
+//		Future<String> future =  executerService.submit(() -> multiThreadingService.runTask());
+//		String s1 = future.get();
+//		System.out.println("Before returns");
+//		return s1;
+		
 //		return "Task submitted successfully";
 	}
 	
