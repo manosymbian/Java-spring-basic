@@ -20,11 +20,12 @@ public class MultiThreadingController {
 	private ExecutorService executerService;
 	
 	@GetMapping("/run")
-	public String runTask() {
-		Future<String> future = executerService.submit(() -> {
-			return multiThreadingService.runTask();
-		});
-		return "Task submitted successfully";
+	public String runTask() throws Exception {
+		Future<String> future =  executerService.submit(() -> multiThreadingService.runTask());
+		String s1 = future.get();
+		System.out.println("Before returns");
+		return s1;
+//		return "Task submitted successfully";
 	}
 	
 }
