@@ -1,8 +1,11 @@
 package com.practice.mutithreading.controller;
+import java.util.stream.Collectors;
 
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,21 +57,34 @@ public class MultiThreadingController {
 	@GetMapping("/all")
 	public CompletableFuture<String> runAllTasks() {
 
-	    CompletableFuture<String> f1 =
-	            multiThreadingService.runTaskAsync(executerService); // 10s
-
-	    CompletableFuture<String> f2 =
-	            multiThreadingService.runIndependentTask(executerService); // 5s
-
-	    CompletableFuture<String> f3 =
-	            multiThreadingService.runThirdTask(executerService); // 3s
-
-	    return CompletableFuture.allOf(f1, f2, f3)
-	    		.thenApply(v -> {
-	    			String r1 = f1.join();
-	    			String r2 = f2.join();
-	    			String r3 = f3.join();
-	    			return r1 + " | " + r2 + " | " + r3 + " [all combined]";
-	    		});
+//	    CompletableFuture<String> f1 =
+//	            multiThreadingService.runTaskAsync(executerService); // 10s
+//
+//	    CompletableFuture<String> f2 =
+//	            multiThreadingService.runIndependentTask(executerService); // 5s
+//
+//	    CompletableFuture<String> f3 =
+//	            multiThreadingService.runThirdTask(executerService); // 3s
+//
+//	    return CompletableFuture.allOf(f1, f2, f3)
+//	    		.thenApply(v -> {
+//	    			String r1 = f1.join();
+//	    			String r2 = f2.join();
+//	    			String r3 = f3.join();
+//	    			return r1 + " | " + r2 + " | " + r3 + " [all combined]";
+//	    		});
+		
+		 		
+		List<CompletableFuture<String>> futures = List.of(
+			multiThreadingService.runTaskAsync(executerService),
+			multiThreadingService.runIndependentTask(executerService),
+			multiThreadingService.runThirdTask(executerService)
+		);
+		return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+				.thenApply(v -> 
+					futures.stream()
+						.map(CompletableFuture::join)
+						.collect(Collectors.joining(" | ")) + " all combined"
+				);
 	}
 }
