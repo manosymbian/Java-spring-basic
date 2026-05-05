@@ -32,5 +32,13 @@ public class MultiThreadingController {
 		
 //		return "Task submitted successfully";
 	}
+	@GetMapping("/compose")
+	public CompletableFuture<String> runCompose() {
+		return multiThreadingService.runTaskAsync(executerService)
+				.thenCompose(result -> 
+					multiThreadingService.runSecondTask(result, executerService)
+				)
+				.thenApply(finalResult -> finalResult + " [final]");
+	}
 	
 }

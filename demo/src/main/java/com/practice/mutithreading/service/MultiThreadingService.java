@@ -22,4 +22,20 @@ public class MultiThreadingService {
 		}, executorService);
 	}
 	
+	public CompletableFuture<String> runSecondTask(String input, ExecutorService executorService) {
+	    return CompletableFuture.supplyAsync(() -> {
+	        String threadName = Thread.currentThread().getName();
+	        System.out.println("Second task started " + threadName);
+
+	        try {
+	            Thread.sleep(5000);
+	        } catch (InterruptedException e) {
+	            Thread.currentThread().interrupt();
+	        }
+
+	        System.out.println("Second task completed " + threadName);
+	        return input + " -> processed by second task";
+	    }, executorService);
+	}
+	
 }
