@@ -54,4 +54,20 @@ public class MultiThreadingService {
 	    }, executorService);
 	}
 	
+	public CompletableFuture<String> runThirdTask(ExecutorService executorService) {
+	    return CompletableFuture.supplyAsync(() -> {
+	        String threadName = Thread.currentThread().getName();
+	        System.out.println("Third task started " + threadName);
+
+	        try {
+	            Thread.sleep(3000);
+	        } catch (InterruptedException e) {
+	            Thread.currentThread().interrupt();
+	        }
+
+	        System.out.println("Third task completed " + threadName);
+	        return "Result from third task by " + threadName;
+	    }, executorService);
+	}
+	
 }

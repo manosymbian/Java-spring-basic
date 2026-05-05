@@ -50,4 +50,25 @@ public class MultiThreadingController {
 			return r1 + " | " + r2 + " combined";
 		});
 	}
+	
+	@GetMapping("/all")
+	public CompletableFuture<String> runAllTasks() {
+
+	    CompletableFuture<String> f1 =
+	            multiThreadingService.runTaskAsync(executerService); // 10s
+
+	    CompletableFuture<String> f2 =
+	            multiThreadingService.runIndependentTask(executerService); // 5s
+
+	    CompletableFuture<String> f3 =
+	            multiThreadingService.runThirdTask(executerService); // 3s
+
+	    return CompletableFuture.allOf(f1, f2, f3)
+	    		.thenApply(v -> {
+	    			String r1 = f1.join();
+	    			String r2 = f2.join();
+	    			String r3 = f3.join();
+	    			return r1 + " | " + r2 + " | " + r3 + " [all combined]";
+	    		});
+	}
 }
