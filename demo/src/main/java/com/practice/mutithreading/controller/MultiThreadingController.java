@@ -32,7 +32,7 @@ public class MultiThreadingController {
 		
 //		return "Task submitted successfully";
 	}
-	@GetMapping("/compose")
+	@GetMapping("/sequence")
 	public CompletableFuture<String> runCompose() {
 		return multiThreadingService.runTaskAsync(executerService)
 				.thenCompose(result -> 
@@ -41,4 +41,13 @@ public class MultiThreadingController {
 				.thenApply(finalResult -> finalResult + " [final]");
 	}
 	
+	
+	@GetMapping("/parallel")
+	public CompletableFuture<String> runParallel() {
+		CompletableFuture<String> future1 = multiThreadingService.runTaskAsync(executerService);
+		CompletableFuture<String> future2 = multiThreadingService.runIndependentTask(executerService);
+		return future1.thenCombine(future2, (r1, r2) -> {
+			return r1 + " | " + r2 + " combined";
+		});
+	}
 }

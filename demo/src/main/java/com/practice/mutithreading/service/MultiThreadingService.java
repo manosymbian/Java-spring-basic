@@ -38,4 +38,20 @@ public class MultiThreadingService {
 	    }, executorService);
 	}
 	
+	public CompletableFuture<String> runIndependentTask(ExecutorService executorService) {
+	    return CompletableFuture.supplyAsync(() -> {
+	        String threadName = Thread.currentThread().getName();
+	        System.out.println("Independent task started " + threadName);
+
+	        try {
+	            Thread.sleep(5000);
+	        } catch (InterruptedException e) {
+	            Thread.currentThread().interrupt();
+	        }
+
+	        System.out.println("Independent task completed " + threadName);
+	        return "Result from independent task by " + threadName;
+	    }, executorService);
+	}
+	
 }
